@@ -40,11 +40,19 @@ Read <artifact> with the Read tool. It is <one-line context: what the artifact i
 with these weaknesses: <list>. Fixes applied since: <list>.
 Rate strictly and independently — do not inflate the score because it improved; judge what you see.
 
+[If a pinned 10-definition exists] The bar for 10/10 was fixed in round 1: <pinned 10-definition>.
+Score against THIS bar — do not invent a new vision of perfection.
+
 Return your assessment in exactly this markdown structure:
 ## Strengths
 ## Weaknesses
+## What a 10 looks like
+(describe the concrete end state, specific to THIS artifact — what would exist on the
+page/post/diff for you to give 10/10. No generic excellence ("better contrast") —
+name the actual elements, content, or structure. If a pinned bar exists, restate it
+and note what's still missing.)
 ## Improvements
-(concrete, actionable)
+(concrete, actionable — the diff between current state and the 10 above)
 ## Reasoning
 (how you weighed strengths vs weaknesses to arrive at the score)
 ## Score
@@ -70,16 +78,19 @@ Dimensions per modality:
 ## Step 3 — Iterate (when a target score is set)
 
 1. Fix the weaknesses (all of them — they're cheap; cherry-picking stalls the loop).
-2. Re-capture (fresh screenshot / re-read) and re-dispatch a fresh judge **with the iteration-memory block** (previous score, weaknesses, fixes applied).
-3. **Plateau rule:** same score 2 rounds in a row → stop polishing the surface; fix the *substance* the judge keeps circling (e.g. regenerate the underlying demo image instead of more CSS; restructure the post instead of line edits).
-4. Track progression (e.g. 6.5 → 7.5 → 8 → 8.5) so the user sees the trend.
-5. Scores are noisy ±0.5 between judges. Near the target, run 2–3 judges and take the median before declaring success.
+2. **Pin the bar:** round 1's "What a 10 looks like" becomes the fixed rubric. Pass it verbatim to every subsequent judge ("score against this bar"). Fresh judges otherwise each invent a new dream and the loop never converges.
+3. Re-capture (fresh screenshot / re-read) and re-dispatch a fresh judge **with the iteration-memory block** (previous score, weaknesses, fixes applied, pinned 10-definition).
+4. **Plateau rule:** same score 2 rounds in a row → read the 10-gap. If the gap names *material* (the demo photo itself, the post's core argument, the module's design) — change the substance; CSS/line edits are sanding a local maximum. If the gap names polish — finish the named items, nothing else.
+5. Track progression (e.g. 6.5 → 7.5 → 8 → 8.5) so the user sees the trend.
+6. Scores are noisy ±0.5 between judges. Near the target, run 2–3 judges and take the median before declaring success.
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
 | Score stated before reasoning | Template puts ## Score last — keep it there |
+| Each judge invents a new "10" (moving goalposts) | Pin round 1's 10-definition; later judges score against it |
+| 10-definition is generic ("more polish", "better UX") | Require artifact-specific end state — actual elements/content named |
 | Reusing the same judge across rounds | Fresh subagent every round; pass history in the prompt |
 | Omitting "don't inflate because it improved" | Judges drift upward on iteration framing without it |
 | Generic advice ("improve contrast") | Require references to actual elements/lines |

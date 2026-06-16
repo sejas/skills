@@ -1,6 +1,6 @@
 # AI Code Skills
 
-A flat collection of [Claude Code skills](https://docs.claude.com/en/docs/claude-code/skills) and supporting hooks for development, intents, presentations, and content workflows.
+A flat collection of [Claude Code skills](https://docs.claude.com/en/docs/claude-code/skills) and supporting hooks for development, presentations, and content workflows.
 
 These are the skills I (Antonio Sejas) use day-to-day across Automattic work and personal projects. They are intentionally small, single-purpose, and composable — drop in whichever ones you find useful.
 
@@ -45,18 +45,10 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | `create-agents-md` | Generates `AGENTS.md` / `CLAUDE.md` for a repository documenting conventions and structure. | When starting a new repo or onboarding a coding agent. |
 | `studio-debug` | Inspects WordPress Studio local sites — SQLite DB, logs, plugin/theme issues. | When a Studio site misbehaves locally. |
 | `teach` | Acts as a teacher that makes me deeply understand the current session — problem, solution, edge cases, broader impact — via a running checklist, incremental confirmation, and quizzes (`AskUserQuestion`). | `/teach` after Claude lands a non-trivial change I want to actually internalize, not just merge. |
-| `score` | Calibrated 0–10 judging of any artifact — website/UI (screenshot), markdown draft (direct read), or code diff. A fresh judge subagent reasons first (strengths/weaknesses/improvements/reasoning), score last, with calibration anchors and iteration memory for improve-until-N loops. | `/score` the landing page, then a goal loop "repeat until 9/10" — the judge drives design/writing iteration. |
-
-### Intents (spec-driven workflow)
-
-Lightweight ticketing inside `~/claude.nosync/intents/`. Each intent is a markdown file with problem, solution, and acceptance criteria — drives focused Claude sessions.
-
-| Skill | How I use it |
-|---|---|
-| `intent-start` | Begin a new intent with spec. I run this before any non-trivial work; the spec becomes the brief for follow-up sessions. |
-| `intent-list` | List in-progress intents. Quick context-switch glance. |
-| `intent-finish` | Mark complete, add PR links, archive to `done/`. |
-| `intent-migrate` | One-shot migration of legacy local `.sejas/` intents into the global folder. |
+| `score` | Calibrated 0–10 judging of any artifact — website/UI (screenshot), markdown draft (direct read), or code diff. A fresh judge subagent reasons first (strengths/weaknesses/improvements/reasoning), score last, with calibration anchors and a pinned "what a 10 looks like" bar so improve-until-N loops converge instead of chasing moving goalposts. | `/score` the landing page, then a goal loop "repeat until 9/10" — the judge drives design/writing iteration. |
+| `start-issue` | From a Linear link or branch name: resolves the issue (Linear MCP, `context-a8c` fallback), spins up a worktree, implements the fix, verifies (lint/typecheck/tests, light+dark for UI), then commits, pushes, and opens a draft PR with the template filled in. | `/start-issue <linear-link>` to go from ticket to draft PR in one shot. |
+| `unworktree` | Reverse of `worktree`: absorbs a worktree's branch back into the main checkout — dirty-tree safety gate, removes the worktree, checks the branch out in the main repo. Set `$MAIN_REPO` to your main checkout. | When I'm done in a `~/worktrees.nosync/` branch and want to continue it in the main repo. |
+| `explore-exploit` | Generate-many-then-select for tasks with a large solution space and a measurable quality signal (naming, UI variants, copy, code/prompt tuning). Fans out candidates, scores them, and iterates toward the best — tournament / simulated-annealing style. | "Generate N options and rank them" or an iterate-until-score loop. |
 
 ### Standup / Daily
 
@@ -69,9 +61,10 @@ Lightweight ticketing inside `~/claude.nosync/intents/`. Each intent is a markdo
 
 | Skill | How I use it |
 |---|---|
+| `brainstorming-names` | Names or renames anything — product, feature, brand, command — generating ranked candidate names with rationale. When something needs a name and I want options, not just the first idea. |
 | `blog-post` | Drafts a markdown blog post in `~/claude.nosync/posts/`. I outline the topic, the skill produces a first draft. |
 | `question` | Answers a question and renders the answer as a styled HTML page. Useful for sharing technical explanations as a link. |
-| `presentation` | Generates Marp slides from an intent spec. Turns an `intent-start` doc into a deck. |
+| `presentation` | Generates Marp slides from a spec/intent doc. Turns a written brief into a deck. |
 | `og-inspect` | Inspects a URL's Open Graph / Twitter Card metadata and renders multi-platform share-card previews (Facebook, X, LinkedIn, Slack, Tumblr). |
 | `travel-routes` | Extracts travel routes from Apple Photos geolocation (via `osxphotos`), clusters dwell points into visited cities, builds interactive maps, and scaffolds trip blog posts. Config via `config.json` (copy `config.example.json`); posts dir overridable with `$TRAVEL_POSTS_DIR`. | Building a vacation recap or year-in-review map from my photo library. |
 
