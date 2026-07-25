@@ -50,6 +50,12 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | `start-issue` | From a Linear link or branch name: resolves the issue (Linear MCP, `context-a8c` fallback), spins up a worktree, implements the fix, verifies (lint/typecheck/tests, light+dark for UI), then commits, pushes, and opens a draft PR with the template filled in. | `/start-issue <linear-link>` to go from ticket to draft PR in one shot. |
 | `unworktree` | Reverse of `worktree`: absorbs a worktree's branch back into the main checkout — dirty-tree safety gate, removes the worktree, checks the branch out in the main repo. Set `$MAIN_REPO` to your main checkout. | When I'm done in a `~/worktrees.nosync/` branch and want to continue it in the main repo. |
 | `explore-exploit` | Generate-many-then-select for tasks with a large solution space and a measurable quality signal (naming, UI variants, copy, code/prompt tuning). Fans out candidates, scores them, and iterates toward the best — tournament / simulated-annealing style. | "Generate N options and rank them" or an iterate-until-score loop. |
+| `design-review` | Designer's-eye QA of a running UI: screenshots at desktop/tablet/phone plus the states the happy path hides, then reports spacing, hierarchy, contrast, state and motion defects by severity with the CSS fix for each — including the AI-slop tells (gradient hero, emoji bullets, three feature cards). | Before shipping a user-facing screen, or when something looks off and I can't name why. |
+| `review-queue` | Merge-confidence table for the PRs still waiting on my review, rated 0-100 from the review docs already on disk. Set `REVIEW_REPO`. | "Which of these can I just merge?" at the end of a review pass. |
+| `review-sweep` | Fans out review agents across every PR awaiting my review, then re-checks the queue to catch new or updated ones. | When the queue has piled up and I want one pass over all of it. |
+| `first-time-contributors` | Finds authors whose first-ever merged PR in a repo landed inside a recent window, via `gh`. | Crediting a new contributor in release notes or a shout-out post. |
+| `pr-leaderboard` | Ranks merged PRs and contributors over a window, for the current repo or any `owner/repo`. | "Who shipped what this week" before a team update. |
+| `release-notes` | Turns a list of merged PRs into user-facing release notes: grouped by theme, one line per coherent change, every PR cited exactly once, with scripted verification of the coverage. | Writing release notes for a version without missing or double-counting PRs. |
 
 ### Standup / Daily
 
@@ -68,6 +74,7 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | `presentation` | Generates Marp slides from a spec/intent doc. Turns a written brief into a deck. |
 | `og-inspect` | Inspects a URL's Open Graph / Twitter Card metadata and renders multi-platform share-card previews (Facebook, X, LinkedIn, Slack, Tumblr). |
 | `travel-routes` | Extracts travel routes from Apple Photos geolocation (via `osxphotos`), clusters dwell points into visited cities, builds interactive maps, and scaffolds trip blog posts. Config via `config.json` (copy `config.example.json`); posts dir overridable with `$TRAVEL_POSTS_DIR`. | Building a vacation recap or year-in-review map from my photo library. |
+| `make-pdf` | Markdown to publication-quality PDF via WeasyPrint: cover page, clickable TOC with real page numbers, running headers, curly quotes, syntax-highlighted code, optional DRAFT watermark. Needs `uv` and Homebrew `pango`. Sending a written doc to someone who will not read markdown. |
 
 ### Productivity
 
@@ -77,6 +84,7 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | `context-window-statusline` | Sets up the Claude Code footer to show context window usage, token counts, and session cost. One-shot install. |
 | `sync-skills` | Mirrors edited skills from `~/.claude/skills/<name>/` to a configurable public skills repo. Reads the `~/.claude/.skills-dirty` marker written by the `skill-dirty-marker.sh` hook, sanitizes personal IDs and scans for secrets, then commits + pushes. Config at `~/.claude/skills/sync-skills/config.json` (repo path, branch, personal-identifier list). I run `/sync-skills` after editing local skills to push the changes here. |
 | `mac-cleanup` | Frees disk space on macOS: scans for space hogs, sorts them into risk buckets (regenerable caches / app data / personal media / backups), offloads irreplaceable media + deduped WordPress backups to remote storage (e.g. Hetzner Storage Box), and trashes only what regenerates. Ships tested scripts (`scan-disk.sh`, `offload-retry.sh` with SSH-drop retry, `backup-dedup.py` for latest-per-site), plus a macOS-quirks reference (bash 3.2, openrsync, `trash` vs `rm`). "Clean up my Mac" / "my disk is full". |
+| `ai-radar` | Digest of what is moving at the AI frontier — new work, trends, and where to spend learning time — from a curated source list in `sources.md`. Catching up after a week heads-down. |
 
 ## Workflows
 
