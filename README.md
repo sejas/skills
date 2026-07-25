@@ -7,8 +7,9 @@ These are the skills I (Antonio Sejas) use day-to-day across Automattic work and
 ## Layout
 
 ```
-skills/   # one folder per skill, each containing SKILL.md
-hooks/    # standalone hook scripts grouped by purpose
+skills/     # one folder per skill, each containing SKILL.md
+hooks/      # standalone hook scripts grouped by purpose
+workflows/  # multi-agent orchestration scripts for the Workflow tool
 ```
 
 No plugin manifest, no marketplace — just drop the folders where you want them.
@@ -76,6 +77,14 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | `context-window-statusline` | Sets up the Claude Code footer to show context window usage, token counts, and session cost. One-shot install. |
 | `sync-skills` | Mirrors edited skills from `~/.claude/skills/<name>/` to a configurable public skills repo. Reads the `~/.claude/.skills-dirty` marker written by the `skill-dirty-marker.sh` hook, sanitizes personal IDs and scans for secrets, then commits + pushes. Config at `~/.claude/skills/sync-skills/config.json` (repo path, branch, personal-identifier list). I run `/sync-skills` after editing local skills to push the changes here. |
 | `mac-cleanup` | Frees disk space on macOS: scans for space hogs, sorts them into risk buckets (regenerable caches / app data / personal media / backups), offloads irreplaceable media + deduped WordPress backups to remote storage (e.g. Hetzner Storage Box), and trashes only what regenerates. Ships tested scripts (`scan-disk.sh`, `offload-retry.sh` with SSH-drop retry, `backup-dedup.py` for latest-per-site), plus a macOS-quirks reference (bash 3.2, openrsync, `trash` vs `rm`). "Clean up my Mac" / "my disk is full". |
+
+## Workflows
+
+Scripts for Claude Code's `Workflow` tool — deterministic multi-agent pipelines. Drop them in `.claude/workflows/` (per project) or `~/.claude/workflows/` (global), then run `Workflow({ name: '<file-name>', args: { … } })`.
+
+| Workflow | What it does |
+|---|---|
+| `linear-issue-pipeline` | Takes a Linear issue id and drives it to a branch: fetch + triage the issue, create a worktree, explore the codebase, plan, implement, review, verify (lint/typecheck/tests + UI screenshots), and optionally open a draft PR. Model tier scales with the triaged issue size, exploration output is handed to the implementer instead of being re-derived, and verification runs exactly once as the single gate. `args: { issue, push, assignee, repo, worktree, plan, team }`. The prompts assume the [WordPress Studio](https://github.com/Automattic/studio) repo layout — swap the repo-specific conventions for your own. |
 
 ## Hooks
 

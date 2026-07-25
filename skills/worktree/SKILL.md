@@ -30,11 +30,15 @@ Create a new git worktree based on origin/trunk in ~/worktrees.nosync, with node
    git worktree add ~/worktrees.nosync/<branch-name> -b <branch-name> origin/trunk
    ```
 
-5. Copy node_modules if it exists in the source directory:
+5. Copy node_modules if it exists in the source directory. Use `cp -c` — on APFS it clones the files instead of copying bytes, so a multi-GB `node_modules` lands instantly and costs no extra disk until something writes to it. Fall back to a plain copy on non-APFS volumes:
    ```bash
-   cp -R ./node_modules ~/worktrees.nosync/<branch-name>/node_modules
+   SRC=$(git rev-parse --show-toplevel); WT=~/worktrees.nosync/<branch-name>
+   cd "$SRC" && find . -maxdepth 4 -name node_modules -type d -not -path "*/node_modules/*" | while read -r nm; do
+     mkdir -p "$WT/$(dirname "$nm")"
+     cp -Rc "$SRC/$nm" "$WT/$nm" 2>/dev/null || cp -R "$SRC/$nm" "$WT/$nm"
+   done
    ```
-   Note: This can take a moment for large node_modules directories.
+   The `find` loop also picks up per-workspace `node_modules` (monorepos), not just the root one — miss those and workspace builds fail in the worktree.
 
 6. Report success with the path to the new worktree:
    ```
