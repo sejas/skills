@@ -82,7 +82,7 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 |---|---|
 | `todo` | Adds a task to Things 3 via the `things:///` URL scheme. Voice-style: "todo: pick up groceries". |
 | `context-window-statusline` | Sets up the Claude Code footer to show context window usage, token counts, and session cost. One-shot install. |
-| `sync-skills` | Mirrors edited skills from `~/.claude/skills/<name>/` to a configurable public skills repo. Reads the `~/.claude/.skills-dirty` marker written by the `skill-dirty-marker.sh` hook, sanitizes personal IDs and scans for secrets, then commits + pushes. Config at `~/.claude/skills/sync-skills/config.json` (repo path, branch, personal-identifier list). I run `/sync-skills` after editing local skills to push the changes here. |
+| `sync-skills` | Mirrors edited skills (`~/.claude/skills/<name>/`) and workflows (`~/.claude/workflows/<name>.js`) to a configurable public skills repo. Reads the `~/.claude/.skills-dirty` marker written by the `skill-dirty-marker.sh` hook, sanitizes personal IDs and scans for secrets, then commits + pushes. Config at `~/.claude/skills/sync-skills/config.json` (repo path, branch, personal-identifier list). I run `/sync-skills` after editing local skills to push the changes here. |
 | `mac-cleanup` | Frees disk space on macOS: scans for space hogs, sorts them into risk buckets (regenerable caches / app data / personal media / backups), offloads irreplaceable media + deduped WordPress backups to remote storage (e.g. Hetzner Storage Box), and trashes only what regenerates. Ships tested scripts (`scan-disk.sh`, `offload-retry.sh` with SSH-drop retry, `backup-dedup.py` for latest-per-site), plus a macOS-quirks reference (bash 3.2, openrsync, `trash` vs `rm`). "Clean up my Mac" / "my disk is full". |
 | `ai-radar` | Digest of what is moving at the AI frontier — new work, trends, and where to spend learning time — from a curated source list in `sources.md`. Catching up after a week heads-down. |
 
@@ -93,6 +93,7 @@ Scripts for Claude Code's `Workflow` tool — deterministic multi-agent pipeline
 | Workflow | What it does |
 |---|---|
 | `linear-issue-pipeline` | Takes a Linear issue id and drives it to a branch: fetch + triage the issue, create a worktree, explore the codebase, plan, implement, review, verify (lint/typecheck/tests + UI screenshots), and optionally open a draft PR. Model tier scales with the triaged issue size, exploration output is handed to the implementer instead of being re-derived, and verification runs exactly once as the single gate. `args: { issue, push, assignee, repo, worktree, plan, team }`. The prompts assume the [WordPress Studio](https://github.com/Automattic/studio) repo layout — swap the repo-specific conventions for your own. |
+| `explore-exploit-strategy-search` | Fans out 20 agents that each design a search strategy for Claude Code from a different metaheuristic seed (simulated annealing, genetic algorithms, beam search, …), then scores all 20 with a fixed 3-judge panel against a frozen rubric and returns the top 3. A worked example of the generate-many-then-judge pattern the `explore-exploit` skill applies inline. |
 
 ## Hooks
 
