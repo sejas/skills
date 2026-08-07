@@ -70,7 +70,7 @@ From the `gh pr view` JSON, compute `additions + deletions` and file count.
 
 **Deep mode** when `additions + deletions > 400` OR `files > 10`. Otherwise **remote-only mode** — skip Step 2b entirely.
 
-State the chosen mode (and the numbers that triggered it) in the review's Context section.
+State the chosen mode in the review's `**Verified:**` header line.
 
 ### Step 2: Extract Linear ID & Fetch Issue
 
@@ -114,7 +114,7 @@ Then, from `$REVIEW_DIR`:
 
 **Never** commit, push, or modify code in the checkout. Read + run only.
 
-If checkout itself fails (no access, disk, etc.), fall back to remote-only mode and say so in the Verification section.
+If checkout itself fails (no access, disk, etc.), fall back to remote-only mode and say so in the review's `## Notes` section.
 
 ### Step 3: Analyze & Generate Review
 
@@ -140,70 +140,17 @@ Compose the review markdown:
 ````markdown
 # PR Review: [#<number> - <title>](<PR_URL>)
 
-**Author:** @<author> | **Branch:** <head> -> <base> | **Date:** <YYYY-MM-DD>
-**Linear:** [<LINEAR_ID>](<LINEAR_URL>) - <LINEAR_TITLE>
-
-## Context
-
-<2-3 sentence summary combining PR description and Linear issue context.>
-
-## Files Changed
-
-<fileCount> files (+<additions> -<deletions>)
-
-| File | Changes |
-|------|---------|
-| path/to/file.ts | +10 -5 |
-
-## Discussion
-
-<Summary of existing comments/reviews: who raised what, what's addressed vs outstanding, current approval state. If no substantive discussion: "No substantive discussion yet.">
-
-## Verification
-
-<Deep mode: lint result (pass/fail + key errors), test result (runner, scope, pass/fail counts), or why a step was skipped. Remote-only mode: "Remote-only review — lint/tests not run (small PR).">
-
-## Findings
-
-### Critical Issues
-
-<Major bugs, security issues, data loss risks. If none: "No critical issues found.">
-
-### Suggestions
-
-**`path/to/file.ts:42`** - <description>
-
-<Problem, fix, and why it matters.>
-
-**Current:**
-```ts
-// existing code, copied verbatim from the diff
-```
-
-**Suggested:**
-```ts
-// proposed replacement code
-```
-
----
-
-### Positive Notes
-
-<Good patterns, clean code, effective solutions. Always include at least one.>
-
-## Verdict
-
-**Recommendation:** <Approve | Comment | Request Changes>
-
-<1-2 sentence summary.>
+**Author:** @<author> | **Branch:** <head> -> <base> | **Date:** <YYYY-MM-DD> | **Linear:** [<LINEAR_ID>](<LINEAR_URL>)
+**Verdict:** **<Approve | Comment | Request Changes>** — <1-2 sentences: what the PR does and why this verdict.>
+**Verified:** <deep mode: "lint pass, tests 214/214 pass" or the failures | remote-only: "remote-only (small PR), lint/tests not run"> | **Size:** <fileCount> files +<additions> -<deletions>
 
 ## Suggested comments
 
 ### Overall (general PR comment — post first)
 
-<Start by thanking the author for adding this specific feature/fix (name it — not a generic "thanks for the PR"). Then 1-2 sentences summarizing the review outcome.>
+<Thank the author for the specific feature/fix by name (not a generic "thanks for the PR"), include one genuine positive about the code, then 1-2 sentences on the review outcome.>
 
-### `path/to/file.ts:42`
+### 🔴 `path/to/file.ts:42` — <short finding title>
 
 **Confidence:** <High | Medium | Low> — <1-2 sentences justifying the rating: what makes it strong (verified against full diff context, clear logic error) or weak (surrounding code not visible in diff, depends on runtime behavior).>
 
@@ -219,19 +166,28 @@ Compose the review markdown:
 ```suggestion
 // full replacement for the commented line(s), valid to apply as-is
 ```
+
+## Outstanding discussion
+
+<Only unresolved reviewer concerns that still apply to the current diff — who raised it, what remains. Note `reviewDecision` if changes were already requested. **Omit this section entirely** when there is nothing outstanding.>
+
+## Notes
+
+<Optional — only facts that change how to act on the review: areas not reviewed (huge PR), lint/tests skipped and why, deep-mode fallback, suspicious-but-confirmed-OK patterns. **Omit this section entirely** when empty.>
 ````
 
 **Output rules:**
-- Omit `**Linear:**` line if no Linear ID found.
-- Critical Issues = genuine blockers only.
-- Include `path/to/file:line` where possible.
-- Quality over quantity.
-- Every code suggestion — in `### Suggestions` and in `## Suggested comments` — MUST show both the `**Current:**` block (existing code, verbatim from the diff) and the replacement, so the reader sees the before/after without opening GitHub. Never show a replacement alone.
+- The document is **verdict first, then pasteable comments** — everything else exists only if it changes what the reader does. Never write filler sections ("No critical issues found", "No substantive discussion yet") — omit the section instead.
+- One findings list only: every finding lives in `## Suggested comments`. No separate Findings/Suggestions/Critical sections — a finding is written once, as its postable comment.
+- Severity prefix on every file entry: 🔴 blocker (must fix before merge) or 🟡 suggestion (author's call). Any 🔴 → verdict is Request Changes.
+- Omit the `**Linear:**` segment if no Linear ID found.
+- Quality over quantity — a 3-comment review that gets posted beats a 10-section report that doesn't.
+- Every code suggestion MUST show both the `**Current:**` block (existing code, verbatim from the diff) and the replacement, so the reader sees the before/after without opening GitHub. Never show a replacement alone.
 
-**Suggested comments** (always include this section):
-- The **first entry is always the Overall comment**: thank the author for the specific feature/fix by name, then summarize the review outcome. No confidence line, no Current block.
+**Suggested comments** (always present, always the first section):
+- The **first entry is always the Overall comment**: thank the author for the specific feature/fix by name, include one genuine positive, then summarize the review outcome. No confidence line, no Current block, no severity prefix.
 - Keep every comment **short, concise, kind, and easy to understand** — plain language, no jargon walls, no lecturing. One idea per comment.
-- One `### \`path/to/file.ts:LINE\`` entry per finding (Critical Issues + Suggestions).
+- One `### <severity> \`path/to/file.ts:LINE\` — <title>` entry per finding.
 - Every entry MUST start with a `**Confidence:**` line: High / Medium / Low, then an em dash and 1-2 sentences explaining the strengths or weaknesses of that rating (e.g. High: full context of the change visible in the diff, clear logic error; Low: depends on code outside the diff or runtime behavior you couldn't verify).
 - The `**Confidence:**` line and `**Current:**` block are for the reader only — everything from the comment body down is what gets pasted verbatim into a GitHub inline comment. GitHub renders the before/after diff itself, so the pasted part needs no Current block.
 - Include a GitHub ` ```suggestion ` block whenever a concrete replacement applies as-is (full replacement for the commented lines, no imports or context it can't carry). Otherwise, comment text only.
@@ -277,6 +233,6 @@ Use `.md` extension.
 - **NEVER commit, push, or modify code** — in any mode.
 - **DO NOT post to GitHub** or approve/reject without explicit user request.
 - Focus on high-impact findings. Skip trivial issues.
-- Always include positive observations.
+- One genuine positive belongs in the Overall comment — never a separate section.
 - Be specific (file paths + line numbers) and constructive.
-- For large PRs (>1000 lines), note you focused on critical areas.
+- For large PRs (>1000 lines), say in `## Notes` which areas you focused on and which you skimmed.
