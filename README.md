@@ -62,7 +62,7 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | Skill | How I use it |
 |---|---|
 | `today` | Enriched daily activity from Claude Code sessions — branches, PRs, Linear issues, what I worked on. Run at end of day. |
-| `standup` | Daily standup file at `${STANDUP_PATH}/YYYY-MM-DD.md`. Pulls PRs from `github.com` (via `gh`) and an optional GitHub Enterprise host (via `context-a8c` MCP), dedupes across Created / Merged / Reviewed sections, and appends without rewriting existing notes. Configure with `STANDUP_PATH`, `STANDUP_GH_USER`, `STANDUP_GH_USER_ENTERPRISE`, `STANDUP_ENTERPRISE_OWNER`, `STANDUP_ENTERPRISE_REPOS`. I run `/standup` once at end of day before posting in Slack. |
+| `standup` | Daily standup file at `<standup_path>/YYYY-MM-DD.md`. Pulls PRs from `github.com` (via `gh`) and an optional GitHub Enterprise host (via `context-a8c` MCP), plus Linear issues created today, dedupes across Created / Merged / Reviewed / Linear sections (Merged includes PRs you merged for others), and appends without rewriting existing notes. Configured via `~/.claude/skills/standup/config.json`, asked for on first run; can copy the result to the clipboard. I run `/standup` once at end of day before posting in Slack. |
 | `yolo-guardian` | On-call/guardian rotation daily checklist: Slack pings, Linear triage queues, Dependabot PRs, build health, Sentry issues — plus the end-of-week handoff note. Everything identifying (people, channels, URLs) lives in a git-ignored `config.json`; the skill drafts replies and issues but never posts without an OK. | Each morning of my guardian week, and `/yolo-guardian` on Friday for the handoff. |
 
 ### Content
@@ -76,6 +76,7 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 | `og-inspect` | Inspects a URL's Open Graph / Twitter Card metadata and renders multi-platform share-card previews (Facebook, X, LinkedIn, Slack, Tumblr). |
 | `travel-routes` | Extracts travel routes from Apple Photos geolocation (via `osxphotos`), clusters dwell points into visited cities, builds interactive maps, and scaffolds trip blog posts. Config via `config.json` (copy `config.example.json`); posts dir overridable with `$TRAVEL_POSTS_DIR`. | Building a vacation recap or year-in-review map from my photo library. |
 | `make-pdf` | Markdown to publication-quality PDF via WeasyPrint: cover page, clickable TOC with real page numbers, running headers, curly quotes, syntax-highlighted code, optional DRAFT watermark. Needs `uv` and Homebrew `pango`. Sending a written doc to someone who will not read markdown. |
+| `gpt-image` | Generates and edits images with OpenAI GPT Image 2.5 via fal.ai — fast `flare` or detail-heavy `sunburst` tier, masks, transparent backgrounds, exact pixel sizes, up to 16 reference images. Stdlib-only Python, needs `FAL_KEY`. Slide art, thumbnails, and editing a photo without losing its composition. |
 
 ### Productivity
 
