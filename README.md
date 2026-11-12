@@ -63,7 +63,6 @@ Each skill is invoked by typing `/<skill-name>` in Claude Code, or by triggering
 |---|---|
 | `today` | Enriched daily activity from Claude Code sessions — branches, PRs, Linear issues, what I worked on. Run at end of day. |
 | `standup` | Daily standup file at `<standup_path>/YYYY-MM-DD.md`. Pulls PRs from `github.com` (via `gh`) and an optional GitHub Enterprise host (via `context-a8c` MCP), plus Linear issues created today, dedupes across Created / Merged / Reviewed / Linear sections (Merged includes PRs you merged for others), and appends without rewriting existing notes. Configured via `~/.claude/skills/standup/config.json`, asked for on first run; can copy the result to the clipboard. I run `/standup` once at end of day before posting in Slack. |
-| `yolo-guardian` | On-call/guardian rotation daily checklist: Slack pings, Linear triage queues, Dependabot PRs, build health, Sentry issues — plus the end-of-week handoff note. Everything identifying (people, channels, URLs) lives in a git-ignored `config.json`; the skill drafts replies and issues but never posts without an OK. | Each morning of my guardian week, and `/yolo-guardian` on Friday for the handoff. |
 
 ### Content
 
