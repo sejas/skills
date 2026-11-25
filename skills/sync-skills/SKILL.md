@@ -18,13 +18,15 @@ Reads from `~/.claude/skills/sync-skills/config.json`:
 {
   "public_repo_path": "~/path/to/your-skills-repo",
   "main_branch": "main",
-  "personal_identifiers": ["your-handle", "your-handle-work", "<your-email>"]
+  "personal_identifiers": ["your-handle", "your-handle-work", "<your-email>"],
+  "exclude": ["some-internal-skill", "workflow:some-internal-workflow"]
 }
 ```
 
 - `public_repo_path` — destination working copy.
 - `main_branch` — branch to commit/push to. Default `main`.
 - `personal_identifiers` — additional substrings to grep for in the personal-ID sweep. Keep it short (just the ones that uniquely identify you).
+- `exclude` — entries that never reach the public repo: internal-only skills, third-party skills installed from elsewhere. Bare `<name>` for a skill, `workflow:<name>` for a workflow. The marker hook doesn't record them, and Step 1 drops them from the marker if they get there anyway. Kept in `config.json` because the names can be internal.
 
 If the config is missing, ask the user for these values on first run and write the file.
 
@@ -44,6 +46,7 @@ If `.skills-dirty` is missing or empty, ask the user what to sync, or offer to d
 
 - `config.json` — per-user state. **This is where anything identifying belongs**: real names and handles, colleagues, channel ids, internal URLs, tokens. A skill needing such data reads it from `config.json` at runtime and its `SKILL.md` names none of it. Keep `skills/*/config.json` git-ignored in both repos.
 - `*.local.*`, `.env`, `.env.*`, `*.token`, `*.secret`.
+- Every skill or workflow named in `config.exclude` — in full, including on `--all` and when the user names it directly. If asked to sync an excluded entry, refuse and point at the exclude list; the user removes it there first.
 - Anything matched by the secret-scan regex (see Step 4) even after sanitization attempts — abort and ask the user.
 
 ## Sanitization rules (applied to every file before copy)
@@ -72,9 +75,17 @@ Load `~/.claude/skills/sync-skills/config.json`. Resolve `public_repo_path` (exp
 MARKER="$HOME/.claude/.skills-dirty"
 [ -s "$MARKER" ] || { echo "no dirty skills"; exit 0; }
 sort -u "$MARKER" -o "$MARKER"
+
+# Drop excluded entries (config.exclude) so they can never be synced.
+CONFIG="$HOME/.claude/skills/sync-skills/config.json"
+jq -r '(.exclude // [])[]' "$CONFIG" > /tmp/sync-skills-exclude
+grep -vFxf /tmp/sync-skills-exclude "$MARKER" > "$MARKER.tmp" || true
+mv "$MARKER.tmp" "$MARKER"
 ```
 
-If empty, ask user which skill to sync (or `--all` to diff every skill against the repo).
+If empty, ask user which skill to sync (or `--all` to diff every skill against the repo). `--all` also skips every `config.exclude` entry.
+
+If an excluded entry already exists in `${public_repo_path}` (published before it was excluded), tell the user and ask whether to remove it there; don't delete silently.
 
 ### Step 2 — For each dirty entry, build a sanitized copy
 
