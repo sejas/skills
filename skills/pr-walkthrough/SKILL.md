@@ -16,7 +16,7 @@ An understanding tool, not a report. **Concise is the feature.** The reader skim
    - github.com: `gh pr view N --repo O/R --json number,title,body,author,headRefOid,additions,deletions,url > pr.json`, then `gh pr diff N --repo O/R > pr.diff`.
    - GitHub Enterprise: `GH_HOST=<enterprise-host> gh …` (set `HTTPS_PROXY` if it sits behind a proxy).
    - Get the *why* from the PR body and the Linear issue (`[A-Z]{2,10}-\d+` in the branch or body).
-   - **Preview deployment** (repos that post one, such as Vercel or Netlify). `PREVIEW_URL_RE='…' ~/.claude/skills/pr-walkthrough/scripts/preview-url.sh O/R N` prints the link from the PR comments. Store it as `pr.live` (the header shows it as a chip, so the reader can match it against the preview window). Empty output means no build was posted: note it in `testing` and continue.
+   - **Preview deployment** (repos that post one, such as Vercel or Netlify). `PREVIEW_BOT=… PREVIEW_URL_RE='…' ~/.claude/skills/pr-walkthrough/scripts/preview-url.sh O/R N` prints the link from the PR comments. Store it as `pr.live` (the header shows it as a chip, so the reader can match it against the preview window). Empty output means no build was posted: note it in `testing` and continue.
    - **Deep links.** Every route in `testing` is a link into the preview, so one click lands on the page to test.
    - **Test data:** use a real test account or site of the user's (ask once, keep it in `config.json`) wherever a route needs one; never leave `<site>` or `example.com` placeholders. If the PR needs a state it can't have, say so in the step and name what to use instead.
 
