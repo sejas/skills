@@ -1,0 +1,21 @@
+query($q: String!, $me: String!, $endCursor: String) {
+  search(query: $q, type: ISSUE, first: 50, after: $endCursor) {
+    pageInfo { hasNextPage endCursor }
+    nodes {
+      ... on PullRequest {
+        number title url isDraft createdAt updatedAt additions deletions changedFiles
+        reviewDecision mergeable headRefOid headRefName baseRefName
+        repository { nameWithOwner name }
+        author { __typename login }
+        commits(last: 1) { nodes { commit { committedDate statusCheckRollup { state } } } }
+        reviewRequests(first: 15) { nodes { requestedReviewer { ... on User { login } ... on Team { name } } } }
+        latestReviews(first: 20) { nodes { author { __typename login } state submittedAt } }
+        myReviews: reviews(last: 1, author: $me) { nodes { state submittedAt } }
+        comments(last: 30) { totalCount nodes { author { __typename login } createdAt } }
+        reviewThreads(first: 100) {
+          nodes { isResolved isOutdated comments(last: 1) { nodes { author { __typename login } createdAt } } }
+        }
+      }
+    }
+  }
+}

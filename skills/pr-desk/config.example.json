@@ -1,0 +1,18 @@
+{
+  "identity_config": "~/.claude/skills/standup/config.json",
+  "state_dir": "~/claude.nosync/pr-desk",
+  "reviews_dir": "~/claude.nosync/reviews",
+  "report_dir": "~/claude.nosync/reviews/pr-desk",
+  "board_repos": [
+    "owner/repo"
+  ],
+  "rereview_lookback_days": 30,
+  "waiting_nudge_days": 3,
+  "max_parallel_agents": 6,
+  "ignore_logins": [
+    "dependabot",
+    "renovate"
+  ],
+  "internal_hosts_re": "intranet\\.example\\.com|example\\.slack\\.com",
+  "tick_cron": "7 9-15 * * 1-5"
+}
